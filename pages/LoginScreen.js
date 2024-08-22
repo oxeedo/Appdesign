@@ -27,14 +27,12 @@ const LoginScreen = () => {
       Alert.alert("Login Failed", "Invalid credentials");
     }
   };
-  const handleBackPress = () => {
-    // Handle back navigation here
-  };
 
+  const isFormValid = email && password;
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
-        <TouchableOpacity onPress={handleBackPress}>
+        <TouchableOpacity>
           <Icon name="chevron-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={{ fontWeight: "700" }}>Help</Text>
@@ -80,11 +78,22 @@ const LoginScreen = () => {
       <View style={styles.forgotPass}>
         <Text style={{ color: "red", marginLeft: 200 }}>Forgot Password</Text>
       </View>
-      <View style={styles.buttonCont}>
-        <Text style={{ color: "white", fontSize: 20, fontWeight: "900" }}>
-          Sign In
-        </Text>
-      </View>
+      <TouchableOpacity onPress={handleLogin} disabled={!isFormValid}>
+        <View
+          style={[
+            styles.buttonCont,
+            { backgroundColor: isFormValid ? "#CE0001" : "#E5E5E5" },
+          ]}
+        >
+          <Text style={styles.buttonText}>Sign In</Text>
+          <Icon
+            name="chevron-forward"
+            size={24}
+            color="#fff"
+            style={{ marginTop: 2, fontWeight: "900" }}
+          />
+        </View>
+      </TouchableOpacity>
       <View style={styles.NoAccount}>
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
           <Text>
@@ -163,6 +172,13 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     borderRadius: 30,
+    flexDirection: "row",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "900",
+    marginRight: -2,
   },
   NoAccount: {
     marginTop: 100,

@@ -20,6 +20,13 @@ const CreatePassword = () => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [isTermsAccepted, setIsTermsAccepted] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [passwordCriteria, setPasswordCriteria] = useState({
+    length: false,
+    lowercase: false,
+    uppercase: false,
+    number: false,
+    specialChar: false,
+  });
 
   const handleCheckboxChange = () => {
     setIsTermsAccepted(!isTermsAccepted);
@@ -36,23 +43,31 @@ const CreatePassword = () => {
   const validatePassword = (password) => {
     const minLength = 8;
     const maxLength = 32;
-    const hasLowercase = /[a-z]/;
-    const hasUppercase = /[A-Z]/;
-    const hasNumber = /\d/;
-    const hasSpecialChar = /[@#$%^&*(),.?":{}|<>]/;
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[@#$%^&*(),.?":{}|<>]/.test(password);
 
-    return (
-      password.length >= minLength &&
-      password.length <= maxLength &&
-      hasLowercase.test(password) &&
-      hasUppercase.test(password) &&
-      hasNumber.test(password) &&
-      hasSpecialChar.test(password)
-    );
+    return {
+      isValid:
+        password.length >= minLength &&
+        password.length <= maxLength &&
+        hasLowercase &&
+        hasUppercase &&
+        hasNumber &&
+        hasSpecialChar,
+      length: password.length >= minLength && password.length <= maxLength,
+      lowercase: hasLowercase,
+      uppercase: hasUppercase,
+      number: hasNumber,
+      specialChar: hasSpecialChar,
+    };
   };
 
   useEffect(() => {
-    setIsPasswordValid(validatePassword(password));
+    const result = validatePassword(password);
+    setIsPasswordValid(result.isValid);
+    setPasswordCriteria(result);
   }, [password]);
 
   const handleSignup = () => {
@@ -66,7 +81,7 @@ const CreatePassword = () => {
       return;
     }
 
-    navigation.navigate("homePage");
+    navigation.navigate("successPage");
   };
 
   return (
@@ -103,19 +118,107 @@ const CreatePassword = () => {
         <Text style={{ fontWeight: "700", paddingTop: 25, fontSize: 18 }}>
           Your password must contain:
         </Text>
-        <Text style={{ fontSize: 16, padding: 5 }}>• 8-32 characters</Text>
-        <Text style={{ fontSize: 16, padding: 5 }}>
-          • At least one lowercase letter
-        </Text>
-        <Text style={{ fontSize: 16, padding: 5 }}>
-          • At least one uppercase letter
-        </Text>
-        <Text style={{ fontSize: 16, padding: 5 }}>• At least one number</Text>
-        <Text style={{ fontSize: 16, padding: 5 }}>
-          • At least one special character (e.g., @)
-        </Text>
+        <View style={styles.criteriaContainer}>
+          <View style={styles.criteriaItem}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  borderColor: passwordCriteria.length ? "green" : "red",
+                },
+              ]}
+            >
+              <Icon
+                name={passwordCriteria.length ? "checkmark" : "close"}
+                size={30}
+                color={passwordCriteria.length ? "green" : "red"}
+              />
+            </View>
+            <Text style={styles.criteriaText}>8-32 characters</Text>
+          </View>
+          <View style={styles.criteriaItem}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  borderColor: passwordCriteria.lowercase ? "green" : "red",
+                },
+              ]}
+            >
+              <Icon
+                name={passwordCriteria.lowercase ? "checkmark" : "close"}
+                size={30}
+                color={passwordCriteria.lowercase ? "green" : "red"}
+              />
+            </View>
+            <Text style={styles.criteriaText}>
+              At least one lowercase letter
+            </Text>
+          </View>
+          <View style={styles.criteriaItem}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  borderColor: passwordCriteria.uppercase ? "green" : "red",
+                },
+              ]}
+            >
+              <Icon
+                name={passwordCriteria.uppercase ? "checkmark" : "close"}
+                size={30}
+                color={passwordCriteria.uppercase ? "green" : "red"}
+              />
+            </View>
+            <Text style={styles.criteriaText}>
+              At least one uppercase letter
+            </Text>
+          </View>
+          <View style={styles.criteriaItem}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  borderColor: passwordCriteria.number ? "green" : "red",
+                },
+              ]}
+            >
+              <Icon
+                name={passwordCriteria.number ? "checkmark" : "close"}
+                size={30}
+                color={passwordCriteria.number ? "green" : "red"}
+              />
+            </View>
+            <Text style={styles.criteriaText}>At least one number</Text>
+          </View>
+          <View style={styles.criteriaItem}>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  borderColor: passwordCriteria.specialChar ? "green" : "red",
+                },
+              ]}
+            >
+              <Icon
+                name={passwordCriteria.specialChar ? "checkmark" : "close"}
+                size={30}
+                color={passwordCriteria.specialChar ? "green" : "red"}
+              />
+            </View>
+            <Text style={styles.criteriaText}>
+              At least one special character (e.g., @)
+            </Text>
+          </View>
+        </View>
       </View>
-
+      <View style={styles.NoAccount}>
+        <Check
+          label="I accept the terms and conditions"
+          checked={isTermsAccepted}
+          onChange={handleCheckboxChange}
+        />
+      </View>
       <TouchableOpacity
         onPress={handleSignup}
         disabled={!isPasswordValid || !isTermsAccepted}
@@ -132,16 +235,9 @@ const CreatePassword = () => {
           name="chevron-forward"
           size={24}
           color="#fff"
-          style={{ marginTop: 2, fontWeight: "900" }}
+          style={{ marginTop: 2 }}
         />
       </TouchableOpacity>
-      <View style={styles.NoAccount}>
-        <Check
-          label="I accept the terms and conditions"
-          checked={isTermsAccepted}
-          onChange={handleCheckboxChange}
-        />
-      </View>
     </View>
   );
 };
@@ -149,13 +245,38 @@ const CreatePassword = () => {
 export default CreatePassword;
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: "#FFFF",
+    flex: 1,
+  },
   iconContainer: {
     paddingLeft: 20,
     paddingTop: 60,
     paddingRight: 20,
     justifyContent: "space-between",
     flexDirection: "row",
+  },
+  criteriaContainer: {
+    paddingTop: 10,
+  },
+  criteriaText: {
+    fontSize: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 5,
+  },
+  criteriaItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 2,
+    padding: 5,
+  },
+  iconWrapper: {
+    borderWidth: 2, // Border width
+    borderRadius: 20, // Adjusted for better circular shape
+    padding: 1, // Padding inside the border
+    alignItems: "center", // Center the icon horizontally
+    justifyContent: "center", // Center the icon vertically
   },
   signInCont: {
     paddingTop: 30,
@@ -168,7 +289,7 @@ const styles = StyleSheet.create({
 
   inputContainer: {
     marginTop: 50,
-    alignItems: "left",
+    alignItems: "flex-start", // Corrected alignment
     paddingLeft: 20,
   },
 
@@ -201,7 +322,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   NoAccount: {
-    marginTop: 100,
-    alignItems: "center",
+    marginTop: 10,
+    paddingLeft: 30,
   },
 });

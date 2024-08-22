@@ -52,7 +52,9 @@ const SignUp = () => {
         </View>
       </View>
       <View style={styles.inputContainer}>
-        <Text style={{ fontWeight: "700", paddingBottom: 5 }}>First Name:</Text>
+        <Text style={{ fontWeight: "700", paddingBottom: 10 }}>
+          First Name:
+        </Text>
         <TextInput
           style={styles.input}
           placeholder="Name"
@@ -60,7 +62,7 @@ const SignUp = () => {
           onChangeText={setName}
           autoCapitalize="words"
         />
-        <Text style={{ fontWeight: "700", paddingBottom: 5 }}>Last Name:</Text>
+        <Text style={{ fontWeight: "700", paddingBottom: 10 }}>Last Name:</Text>
         <TextInput
           style={styles.input}
           placeholder="Last Name"
@@ -68,11 +70,16 @@ const SignUp = () => {
           onChangeText={setlastName}
           autoCapitalize="words"
         />
-        <Text style={{ fontWeight: "700", paddingBottom: 5 }}>
+        <Text style={{ fontWeight: "700", paddingBottom: 10 }}>
           Email Address:
         </Text>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            isFocused && { borderColor: "#808080" }, // Change to your focus color
+          ]}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
@@ -98,7 +105,7 @@ const SignUp = () => {
         </View>
       </TouchableOpacity>
       <View style={styles.NoAccount}>
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <TouchableOpacity onPress={() => navigation.navigate("successPage")}>
           <Text>
             Already have an account?
             <Text style={{ color: "red", paddingLeft: 0 }}> Sign In</Text>
@@ -143,7 +150,7 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
     width: "95%",
-    borderColor: "#ccc",
+    borderColor: "#808080",
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,

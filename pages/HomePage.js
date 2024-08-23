@@ -9,8 +9,9 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconMat from "react-native-vector-icons/MaterialIcons";
 import Slider from "../component/Slider";
 import help_icon from "../assets/help_icon.png";
+import { useRoute } from "@react-navigation/native";
 
-const HomePage = () => {
+const HomePage = ({ firstname }) => {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark" backgroundColor="#fff" />
@@ -26,7 +27,7 @@ const HomePage = () => {
             </View>
             <View style={styles.yello}>
               <Text style={styles.textColor}>
-                <Text style={{ fontWeight: "bold" }}>yellow,</Text> ameh
+                <Text style={{ fontWeight: "bold" }}>yellow,</Text> {firstname}
               </Text>
               <Text style={styles.textColor}>07025736899</Text>
               <LinearGradient

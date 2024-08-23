@@ -4,10 +4,11 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React from "react";
 import { useState } from "react";
-import Icon from "react-native-vector-icons/Ionicons"; // or another icon library
+import Icon from "react-native-vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen = () => {
@@ -20,15 +21,45 @@ const LoginScreen = () => {
     setSecureTextEntry(!secureTextEntry);
   };
 
-  const handleLogin = () => {
-    if (email === "test@example.com" && password === "password") {
-      Alert.alert("Login Successful", "Welcome!");
-    } else {
-      Alert.alert("Login Failed", "Invalid credentials");
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const handleLogin = async () => {
+    try {
+      console.log("Attempting login with:", normalizedEmail, password);
+      const response = await fetch("http://192.168.43.200:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: normalizedEmail,
+          password,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const firstname = data.user.firstname; // Extract the firstname
+        navigation.navigate("home", { firstname });
+        // console.log(data.user);
+        // console.log(firstname);
+      } else {
+        const errorData = await response.json();
+        console.log("Login Failed:", errorData);
+
+        if (response.status === 401) {
+          Alert.alert("Login Failed", "Invalid credentials");
+        } else {
+          Alert.alert("Error", errorData.message || "Something went wrong");
+        }
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      Alert.alert("Error", "Network or server error");
     }
   };
-
   const isFormValid = email && password;
+
   return (
     <View style={styles.container}>
       <View style={styles.iconContainer}>
@@ -63,8 +94,8 @@ const LoginScreen = () => {
             placeholder="Password"
             value={password}
             onChangeText={setPassword}
-            secureTextEntry={secureTextEntry} // Update this line
-            style={{ flex: 1 }} // Added to ensure the TextInput takes the available space
+            secureTextEntry={secureTextEntry}
+            style={{ flex: 1 }}
           />
           <TouchableOpacity onPress={toggleSecureTextEntry} style={styles.icon}>
             <Icon
@@ -98,7 +129,7 @@ const LoginScreen = () => {
         <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
           <Text>
             Don't have an account?
-            <Text style={{ color: "red", paddingLeft: 0 }}> Sign Up</Text>
+            <Text style={{ color: "red", paddingLeft: 5 }}> Sign Up</Text>
           </Text>
         </TouchableOpacity>
       </View>
@@ -134,7 +165,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: 70,
-    alignItems: "left",
+    alignItems: "flex-start",
     paddingLeft: 20,
   },
   input: {
@@ -146,10 +177,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 8,
   },
-
   passCont: {
     flexDirection: "row",
-    alignItems: "center", // Vertically align the input and icon
+    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
@@ -162,7 +192,6 @@ const styles = StyleSheet.create({
   forgotPass: {
     alignItems: "center",
   },
-
   buttonCont: {
     marginTop: 20,
     alignItems: "center",
@@ -178,7 +207,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontWeight: "900",
-    marginRight: -2,
+    marginRight: -2, // Consider adjusting or removing this
   },
   NoAccount: {
     marginTop: 100,

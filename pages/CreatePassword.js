@@ -13,7 +13,7 @@ import { useRoute } from "@react-navigation/native";
 
 const CreatePassword = () => {
   const route = useRoute();
-  const { name, lastName, email } = route.params;
+  const { firstname, lastname, email } = route.params;
 
   const navigation = useNavigation();
   const [password, setPassword] = useState("");
@@ -70,7 +70,7 @@ const CreatePassword = () => {
     setPasswordCriteria(result);
   }, [password]);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!isPasswordValid) {
       alert("Your password does not meet the required criteria.");
       return;
@@ -81,7 +81,36 @@ const CreatePassword = () => {
       return;
     }
 
-    navigation.navigate("successPage");
+    // Construct the request payload
+    const payload = {
+      firstname,
+      lastname,
+      email,
+      password,
+    };
+
+    try {
+      // Replace with your API endpoint
+      const response = await fetch("http://192.168.43.200:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        // Handle success, for example, navigate to the success page
+        navigation.navigate("successPage");
+      } else {
+        // Handle error response
+        const errorData = await response.json();
+        alert(`Signup failed: ${errorData.message}`);
+      }
+    } catch (error) {
+      // Handle network or other errors
+      alert(`An error occurred: ${error.message}`);
+    }
   };
 
   return (
@@ -130,7 +159,7 @@ const CreatePassword = () => {
             >
               <Icon
                 name={passwordCriteria.length ? "checkmark" : "close"}
-                size={30}
+                size={20}
                 color={passwordCriteria.length ? "green" : "red"}
               />
             </View>
@@ -147,7 +176,7 @@ const CreatePassword = () => {
             >
               <Icon
                 name={passwordCriteria.lowercase ? "checkmark" : "close"}
-                size={30}
+                size={20}
                 color={passwordCriteria.lowercase ? "green" : "red"}
               />
             </View>
@@ -166,7 +195,7 @@ const CreatePassword = () => {
             >
               <Icon
                 name={passwordCriteria.uppercase ? "checkmark" : "close"}
-                size={30}
+                size={20}
                 color={passwordCriteria.uppercase ? "green" : "red"}
               />
             </View>
@@ -185,7 +214,7 @@ const CreatePassword = () => {
             >
               <Icon
                 name={passwordCriteria.number ? "checkmark" : "close"}
-                size={30}
+                size={20}
                 color={passwordCriteria.number ? "green" : "red"}
               />
             </View>
@@ -202,7 +231,7 @@ const CreatePassword = () => {
             >
               <Icon
                 name={passwordCriteria.specialChar ? "checkmark" : "close"}
-                size={30}
+                size={20}
                 color={passwordCriteria.specialChar ? "green" : "red"}
               />
             </View>
@@ -243,7 +272,6 @@ const CreatePassword = () => {
 };
 
 export default CreatePassword;
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FFFF",

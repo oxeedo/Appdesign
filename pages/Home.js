@@ -20,6 +20,7 @@ import play from "../assets/play.png";
 import more from "../assets/more.png";
 import help from "../assets/help.png";
 import HomePage from "../pages/HomePage";
+import { useRoute } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 const _renderIcon = (routeName, selectedTab) => {
@@ -76,6 +77,10 @@ const renderTabBar = ({ routeName, selectedTab, navigate }) => {
 };
 
 const Home = () => {
+  const route = useRoute();
+  const { firstname } = route.params || {}; // Ensure route.params exists
+
+  console.log("Firstname:", firstname);
   return (
     <NavigationContainer independent={true}>
       <CurvedBottomBarExpo.Navigator
@@ -102,7 +107,7 @@ const Home = () => {
           name="Home"
           position="LEFT"
           options={{ headerShown: false }}
-          component={() => <HomePage />}
+          component={(props) => <HomePage {...props} firstname={firstname} />}
         />
         <CurvedBottomBarExpo.Screen
           options={{ headerShown: false }}
@@ -126,6 +131,7 @@ const Home = () => {
     </NavigationContainer>
   );
 };
+
 export default Home;
 const styles = StyleSheet.create({
   container: {

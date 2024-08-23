@@ -13,8 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 
 const SignUp = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState("");
-  const [lastName, setlastName] = useState("");
+  const [firstname, setfirstName] = useState("");
+  const [lastname, setlastName] = useState("");
   const [email, setEmail] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -25,8 +25,8 @@ const SignUp = () => {
   const handleNextButton = () => {
     if (isFormValid) {
       navigation.navigate("createPassword", {
-        name: name,
-        lastName: lastName,
+        firstname: firstname,
+        lastname: lastname,
         email: email,
       });
     } else {
@@ -34,7 +34,7 @@ const SignUp = () => {
     }
   };
 
-  const isFormValid = name && lastName && email;
+  const isFormValid = firstname && lastname && email;
 
   return (
     <View style={styles.container}>
@@ -58,15 +58,15 @@ const SignUp = () => {
         <TextInput
           style={styles.input}
           placeholder="Name"
-          value={name}
-          onChangeText={setName}
+          value={firstname}
+          onChangeText={setfirstName}
           autoCapitalize="words"
         />
         <Text style={{ fontWeight: "700", paddingBottom: 10 }}>Last Name:</Text>
         <TextInput
           style={styles.input}
           placeholder="Last Name"
-          value={lastName}
+          value={lastname}
           onChangeText={setlastName}
           autoCapitalize="words"
         />

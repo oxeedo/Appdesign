@@ -52,7 +52,7 @@ export default SuccessPage;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 50,
+    marginTop: 60,
     paddingLeft: 20,
     paddingRight: 20,
     backgroundColor: "#FFFF",
